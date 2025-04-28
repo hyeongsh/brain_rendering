@@ -1,0 +1,18 @@
+html, body {
+	margin: 0;
+	height: 100%;
+}
+
+.grid-container {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: repeat(3, 1fr);
+	height: 100vh;
+}
+
+.grid-item {
+	display: grid;          /* 각 셀을 grid로 */
+	place-items: center;    /* 아이템 가운데 정렬 */
+	font-size: 1rem;
+}
+  
