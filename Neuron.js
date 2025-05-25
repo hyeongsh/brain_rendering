@@ -34,6 +34,10 @@ class Neuron {
 			return false;
 		}
 	}
+
+	reset() {
+		this.transmission = 0.0;
+	}
 }
 
 export default Neuron;

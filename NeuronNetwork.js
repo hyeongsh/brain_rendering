@@ -19,11 +19,27 @@ class NeuronNetwork {
 			neuron: new Neuron(scene, region.position, glowLayer),
 		}));
 		
-		// this.spikeNeuron("Thalamus_react", this.visConnections, 0.25);
-		this.spikeNeuron("Thalamus_react", this.audConnections, 0.25);
+		this.progress = false;
+	}
+	
+	startVisual() {
+		if (this.progress === false) {
+			this.spikeNeuron("Thalamus_react", this.visConnections, 0.25);
+		} else {
+			alert("이전 과정이 진행중입니다.")
+		}
+	}
+	
+	startAuditory() {
+		if (this.progress === false) {
+			this.spikeNeuron("Thalamus_react", this.audConnections, 0.25);
+		} else {
+			alert("이전 과정이 진행중입니다.")
+		}
 	}
 
 	spikeNeuron(regionId, connections, spiking) {
+		this.progress = true;
 		const regionNeurons = this.neurons.filter(n => n.id === regionId);
 		const printText = this.areaText.find(([area]) => area === regionId)?.[1];
 		this.textBlock.text = printText;
@@ -62,8 +78,14 @@ class NeuronNetwork {
 				}
 			}, 200);
 		}).then(() => {
+			regionNeurons.forEach(n => {
+				n.neuron.reset();
+			})
 			if (nextRegions.length === 0) {
 				this.textBlock.text = "";
+			}
+			if (nextRegions.length === 0) {
+				this.progress = false;
 			}
 			for (const region of nextRegions) {
 				if (this.respondRegions.includes(region)) {
