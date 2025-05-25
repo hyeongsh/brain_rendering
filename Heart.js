@@ -33,8 +33,8 @@ class Heart {
 		);
 
 		const keys = [
-			{ frame: 0, value: new BABYLON.Vector3(1.03, 1.03, 1.03) },
-			{ frame: 15, value: new BABYLON.Vector3(0.97, 0.97, 0.97) },
+			{ frame: 0, value: new BABYLON.Vector3(1, 1, 1) },
+			{ frame: 15, value: new BABYLON.Vector3(1.03, 1.03, 1.03) },
 			{ frame: 30, value: new BABYLON.Vector3(1, 1, 1) },
 		]
 
@@ -49,6 +49,32 @@ class Heart {
 				this.scene.beginAnimation(mesh, 0, 30, true);
 			}
 		})
+	}
+
+	response() {
+		
+		const keys = [
+			{ frame: 0, value: new BABYLON.Vector3(1, 1, 1) },
+			{ frame: 8, value: new BABYLON.Vector3(1.07, 1.07, 1.07) },
+			{ frame: 15, value: new BABYLON.Vector3(1, 1, 1) },
+		]
+		this.scaleAnimation.setKeys(keys);
+		
+		this.heart.meshes.forEach((mesh) => {
+			this.scene.beginAnimation(mesh, 0, 15, true);
+		});
+		
+		setTimeout(() => {
+			const normalKeys = [
+				{ frame: 0, value: new BABYLON.Vector3(1, 1, 1) },
+				{ frame: 15, value: new BABYLON.Vector3(1.03, 1.03, 1.03) },
+				{ frame: 30, value: new BABYLON.Vector3(1, 1, 1) },
+			];
+			this.scaleAnimation.setKeys(normalKeys);
+			this.heart.meshes.forEach((mesh) => {
+				this.scene.beginAnimation(mesh, 0, 30, true);
+			});
+		}, 5000);
 	}
 
 

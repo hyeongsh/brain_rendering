@@ -1,20 +1,27 @@
 import Neuron from "./Neuron.js";
 
 class NeuronNetwork {
-	constructor(scene) {
+	constructor(scene, textBlock, heart) {
+		this.textBlock = textBlock;
+		this.heart = heart;
 		this.initNeurons();
+
+		const glowLayer = new BABYLON.GlowLayer("glow", scene);
 
 		this.neurons = this.brainRegions.map(region => ({
 			id: region.id,
-			neuron: new Neuron(scene, region.position),
+			neuron: new Neuron(scene, region.position, glowLayer),
 		}));
 		
-		this.spikeNeuron("Thalamus_react", 0.5);
+		// this.spikeNeuron("Thalamus_react", this.visConnections, 0.25);
+		this.spikeNeuron("Thalamus_react", this.audConnections, 0.25);
 	}
 
-	spikeNeuron(regionId, spiking) {
+	spikeNeuron(regionId, connections, spiking) {
 		const regionNeurons = this.neurons.filter(n => n.id === regionId);
-		const nextRegions = this.connections.filter(([from, _]) => from === regionId).map(([_, to]) => to);
+		const printText = this.areaText.find(([area]) => area === regionId)?.[1];
+		this.textBlock.text = printText;
+		const nextRegions = connections.filter(([from, _]) => from === regionId).map(([_, to]) => to);
 		return new Promise(resolve => {
 			const spike = setInterval(() => {
 				const index1 = Math.floor(Math.random() * 21);
@@ -25,11 +32,17 @@ class NeuronNetwork {
 				}
 			}, 100);
 		}).then(() => {
+			if (nextRegions.length === 0) {
+				this.textBlock.text = "";
+			}
 			for (const region of nextRegions) {
 				if (this.respondRegions.includes(region)) {
-					this.spikeNeuron(region, 0.25);
+					if (region === "SpinalCord_1") {
+					this.heart.response();
+					}
+					this.spikeNeuron(region, connections, 0.25);
 				} else {
-					this.spikeNeuron(region, 0.125)
+					this.spikeNeuron(region, connections, 0.125)
 				}
 			}
 		})
@@ -64,6 +77,13 @@ class NeuronNetwork {
 			{ id: "Prefrontal_2", position: [0, 0.75, -0.6], spread: { x: 0.08, y: 0.05, z: 0.05 } }, 
 			// 안와전두엽: 감정적 의사결정, 보상/처벌 판단
 			{ id: "Orbitofrontal", position: [0, 0.53, -0.45], spread: { x: 0.08, y: 0.03, z: 0.1 } }, 
+			// 측두엽: 소리 자극 분석
+			{ id: "Temporal_lobe_1", position: [0.3, 0.4, 0], spread: { x: 0.03, y: 0.03, z: 0.3 } },
+			{ id: "Temporal_lobe_2", position: [-0.3, 0.4, 0], spread: { x: 0.03, y: 0.03, z: 0.3 } },
+			// 브로카: 실제로 행동할 동작 계획
+			{ id: "Broca", position: [0.3, 0.65, -0.35], spread: {x: 0.05, y: 0.03, z: 0.03 } },
+			// 운동피질: 운동 명령 계획
+			{ id: "MotorCortex", position: [0, 0.9, -0.1], spread: {x: 0.2, y: 0.1, z: 0.05 } },
 		];
 
 		this.brainRegions = this.gatewayRegions.flatMap(region => {
@@ -80,7 +100,7 @@ class NeuronNetwork {
 			return [region, ...clones];
 		});
 
-		this.connections = [
+		this.visConnections = [
 			["Thalamus_react", "Occipital_lobe"],
 			["Occipital_lobe", "Hippocampus_1"],
 			["Hippocampus_1", "Thalamus_unc"],
@@ -97,6 +117,42 @@ class NeuronNetwork {
 			["Orbitofrontal", "Parietal"],
 			["Parietal", "SpinalCord_2"],
 		];
+
+		this.audConnections = [
+			["Thalamus_react", "Amygdala"],
+			["Amygdala", "Hypothalamus"],
+			["Hypothalamus", "Medulla"],
+			["Medulla", "SpinalCord_1"],
+			["SpinalCord_1", "Temporal_lobe_1"],
+			["SpinalCord_1", "Temporal_lobe_2"],
+			["Temporal_lobe_2", "Hippocampus_1"],
+			["Hippocampus_1", "Prefrontal_1"],
+			["Prefrontal_1", "Broca"],
+			["Broca", "MotorCortex"],
+			["MotorCortex", "SpinalCord_2"],
+		];
+
+		this.areaText = [
+			["Thalamus_react", "Thalamus(시상)\n감각 정보 입력 및 처리"],
+			["Occipital_lobe", "Occipital(후두엽)\n시각 정보 처리 (형태, 색, 움직임 등)"],
+			["Hippocampus_1", "Hippocampus(해마)\n기억 저장과 회상"],
+			["Thalamus_unc", "Thalamus(시상)\n정제된 감각 정보를 대뇌 피질로 전달"],
+			["Amygdala", "Amygdala(편도체)\n감정 처리, 특히 위협 감지"],
+			["Hypothalamus", "Hypothalamus(시상하부)\n자율신경계 조절"],
+			["Medulla", "Medulla(연수)\n심박수, 호흡 조절"],
+			["SpinalCord_1", "SpinalCord(척수)\n근육으로 명령 전달"],
+			["Occipital", "Occipital(후두엽)\n시각 정보 처리(의식)"],
+			["Geschwind", "Geschwind(게슈윈드)\n언어 처리 및 시각 연결"],
+			["Prefrontal_1", "Prefrontal(전전두엽)\n논리적 사고, 계획, 실행 제어"],
+			["Hippocampus_2", "Hippocampus(해마)\n기억 저장과 회상"],
+			["Prefrontal_2", "Prefrontal(전전두엽)\n논리적 사고, 계획, 실행 제어"],
+			["Orbitofrontal", "Orbitofrontal(안와전두엽)\n감정과 보상을 고려한 의사결정"],
+			["Parietal", "Parietal(두정엽)\n위치 인식과 시공간 통합 정보 처리"],
+			["SpinalCord_2", "SpinalCord(척수)\n근육으로 명령 전달"],
+			["Temporal_lobe_2", "Temporal(측두엽)\n청각 정보 분석 및 기억, 감정과의 연동"],
+			["Broca", "Broca(브로카영역)\n말을 구성하고 표현하기 위한 언어 운동 계획"],
+			["MotorCortex", "MotorCortex(운동피질)\n말하거나 반응하기 위한 실제 움직임 제어"],
+		]
 
 		this.respondRegions = ["Thalamus_react", "Occipital_lobe", "Hippocampus_1", "Amygdala", "Hypothalamus", "Medulla", "SpinalCord_1"];
 	}

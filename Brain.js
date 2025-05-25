@@ -15,13 +15,13 @@ class Brain {
 		);
 
 		this.glassMaterial = new BABYLON.PBRMaterial("glass", this.scene);
-		this.glassMaterial.alpha = 0.2;
+		this.glassMaterial.alpha = 0.4;
 		this.glassMaterial.metallic = 0.0;
-		this.glassMaterial.roughness = 0.1;
+		this.glassMaterial.roughness = 0.05;
 		this.glassMaterial.indexOfRefraction = 1.5;
 		this.glassMaterial.subSurface.isRefractionEnabled = true;
-		this.glassMaterial.subSurface.refractionIntensity = 1;
-		this.glassMaterial.subSurface.tintColor = new BABYLON.Color3(0.4, 0.85, 0.9);
+		this.glassMaterial.subSurface.refractionIntensity = 0.98;
+		this.glassMaterial.subSurface.tintColor = new BABYLON.Color3(0, 0, 0);
 	
 		this.brain.meshes.forEach((mesh) => {
 			if (mesh instanceof BABYLON.Mesh) {
