@@ -4,9 +4,15 @@ class NeuronNetwork {
 	constructor(scene, textBlock, heart) {
 		this.textBlock = textBlock;
 		this.heart = heart;
+		this.scene = scene;
 		this.initNeurons();
 
 		const glowLayer = new BABYLON.GlowLayer("glow", scene);
+		this.glowLayer = glowLayer;
+
+		const tubeMat = new BABYLON.StandardMaterial("spikeTubeMat", this.scene);
+		tubeMat.emissiveColor = new BABYLON.Color3(1, 0.2, 0.2);
+		this.tubeMat = tubeMat;
 
 		this.neurons = this.brainRegions.map(region => ({
 			id: region.id,
@@ -26,11 +32,35 @@ class NeuronNetwork {
 			const spike = setInterval(() => {
 				const index1 = Math.floor(Math.random() * 21);
 				const index2 = Math.floor(Math.random() * 21);
-				if (regionNeurons[index1].neuron.spikeNeuron(spiking) || regionNeurons[index2].neuron.spikeNeuron(spiking)) {
+				const index3 = Math.floor(Math.random() * 21);
+				const p1 = regionNeurons[index1].neuron.sphere.position
+				const p2 = regionNeurons[index2].neuron.sphere.position;
+				const p3 = regionNeurons[index3].neuron.sphere.position;
+				const paths = [
+					[p1, p2],
+					[p2, p3],
+					[p3, p1]
+				];
+				paths.forEach((path, idx) => {
+					const edgeTube = BABYLON.MeshBuilder.CreateTube(`spikeTube${idx}`, { 
+						path: path,
+						radius: 0.001,
+						updatable: false
+					}, this.scene);
+					edgeTube.material = this.tubeMat;
+					this.glowLayer.addIncludedOnlyMesh(edgeTube);
+					setTimeout(() => {
+						edgeTube.dispose();
+					}, 300);
+				})
+				if (regionNeurons[index1].neuron.spikeNeuron(spiking) || 
+					regionNeurons[index2].neuron.spikeNeuron(spiking) || 
+					regionNeurons[index3].neuron.spikeNeuron(spiking)
+				) {
 					clearInterval(spike);
 					resolve();
 				}
-			}, 100);
+			}, 200);
 		}).then(() => {
 			if (nextRegions.length === 0) {
 				this.textBlock.text = "";
@@ -38,7 +68,7 @@ class NeuronNetwork {
 			for (const region of nextRegions) {
 				if (this.respondRegions.includes(region)) {
 					if (region === "SpinalCord_1") {
-					this.heart.response();
+						this.heart.response();
 					}
 					this.spikeNeuron(region, connections, 0.25);
 				} else {
@@ -64,10 +94,10 @@ class NeuronNetwork {
 			// 시상하부: 자율신경계, 내분비계 조절 (심박수, 체온 등)
 			{ id: "Hypothalamus", position: [0, 0.5, -0.1], spread: { x: 0.05, y: 0.05, z: 0.05 } }, 
 			// 연수: 심박수, 호흡 등 생명 유지 기능 조절
-			{ id: "Medulla", position: [0, 0.3, 0.12], spread: { x: 0.02, y: 0.04, z: 0.01 } }, 
+			{ id: "Medulla", position: [0, 0.3, 0.1], spread: { x: 0.02, y: 0.04, z: 0.01 } }, 
 			// 척수: 근육으로 명령 전달
-			{ id: "SpinalCord_1", position: [0, 0.15, 0.18], spread: { x: 0.02, y: 0.04, z: 0.01 } }, 
-			{ id: "SpinalCord_2", position: [0, 0.15, 0.18], spread: { x: 0.02, y: 0.04, z: 0.01 } }, 
+			{ id: "SpinalCord_1", position: [0, 0.15, 0.16], spread: { x: 0.02, y: 0.04, z: 0.01 } }, 
+			{ id: "SpinalCord_2", position: [0, 0.15, 0.16], spread: { x: 0.02, y: 0.04, z: 0.01 } }, 
 			// 게슈윈트: 언어 처리 및 시각 연결
 			{ id: "Geschwind", position: [0.4, 0.75, 0.35], spread: { x: 0.02, y: 0.04, z: 0.04 } }, 
 			// 두정엽: 시공간 감각, 위치 정보 처리 ("어디에 있는가")

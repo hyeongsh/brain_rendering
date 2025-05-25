@@ -16,9 +16,8 @@ class Neuron {
 
 		// 3. GlowLayer 추가 (진짜 빛나는 느낌!)
 		this.glowLayer = glowLayer;
-		// this.glowLayer = new BABYLON.GlowLayer("grow", scene);
 		this.glowLayer.addIncludedOnlyMesh(this.sphere);
-		this.glowLayer.intensity = 1.5;
+		this.glowLayer.intensity = 1;
 		this.sphere.isVisible = false;
 	}
 
@@ -26,7 +25,7 @@ class Neuron {
 		this.sphere.isVisible = true;
 		setTimeout(() => {
 			this.sphere.isVisible = false;
-		}, 100);
+		}, 300);
 		if (this.transmission >= 1.0) {
 			this.transmission = 0.0;
 			return true;
