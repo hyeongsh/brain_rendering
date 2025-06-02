@@ -74,7 +74,7 @@ class Heart {
 			this.heart.meshes.forEach((mesh) => {
 				this.scene.beginAnimation(mesh, 0, 30, true);
 			});
-		}, 5000);
+		}, 10000);
 	}
 
 

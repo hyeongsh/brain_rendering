@@ -35,6 +35,7 @@ class Neuron {
 		}
 	}
 
+	// transmission을 0으로 초기화
 	reset() {
 		this.transmission = 0.0;
 	}

@@ -60,7 +60,7 @@ class NeuronNetwork {
 				paths.forEach((path, idx) => {
 					const edgeTube = BABYLON.MeshBuilder.CreateTube(`spikeTube${idx}`, { 
 						path: path,
-						radius: 0.001,
+						radius: 0.003,
 						updatable: false
 					}, this.scene);
 					edgeTube.material = this.tubeMat;
@@ -126,7 +126,6 @@ class NeuronNetwork {
 			{ id: "Parietal", position: [0, 0.9, 0.1], spread: { x: 0.2, y: 0.09, z: 0.09 } }, 
 			// 전전두엽: 이성적 판단, 계획, 실행 통제 (고차원적 사고)
 			{ id: "Prefrontal_1", position: [0, 0.75, -0.6], spread: { x: 0.08, y: 0.05, z: 0.05 } }, 
-			{ id: "Prefrontal_2", position: [0, 0.75, -0.6], spread: { x: 0.08, y: 0.05, z: 0.05 } }, 
 			// 안와전두엽: 감정적 의사결정, 보상/처벌 판단
 			{ id: "Orbitofrontal", position: [0, 0.53, -0.45], spread: { x: 0.08, y: 0.03, z: 0.1 } }, 
 			// 측두엽: 소리 자극 분석
@@ -164,8 +163,7 @@ class NeuronNetwork {
 			["Occipital", "Geschwind"],
 			["Geschwind", "Prefrontal_1"],
 			["Prefrontal_1", "Hippocampus_2"],
-			["Hippocampus_2", "Prefrontal_2"],
-			["Prefrontal_2", "Orbitofrontal"],
+			["Hippocampus_2", "Orbitofrontal"],
 			["Orbitofrontal", "Parietal"],
 			["Parietal", "SpinalCord_2"],
 		];
@@ -197,7 +195,6 @@ class NeuronNetwork {
 			["Geschwind", "Geschwind(게슈윈드)\n언어 처리 및 시각 연결"],
 			["Prefrontal_1", "Prefrontal(전전두엽)\n논리적 사고, 계획, 실행 제어"],
 			["Hippocampus_2", "Hippocampus(해마)\n기억 저장과 회상"],
-			["Prefrontal_2", "Prefrontal(전전두엽)\n논리적 사고, 계획, 실행 제어"],
 			["Orbitofrontal", "Orbitofrontal(안와전두엽)\n감정과 보상을 고려한 의사결정"],
 			["Parietal", "Parietal(두정엽)\n위치 인식과 시공간 통합 정보 처리"],
 			["SpinalCord_2", "SpinalCord(척수)\n근육으로 명령 전달"],
@@ -206,7 +203,7 @@ class NeuronNetwork {
 			["MotorCortex", "MotorCortex(운동피질)\n말하거나 반응하기 위한 실제 움직임 제어"],
 		]
 
-		this.respondRegions = ["Thalamus_react", "Occipital_lobe", "Hippocampus_1", "Amygdala", "Hypothalamus", "Medulla", "SpinalCord_1"];
+		this.respondRegions = ["Thalamus_react", "Occipital_lobe", "Hippocampus_1", "Thalamus_unc", "Amygdala", "Hypothalamus", "Medulla", "SpinalCord_1"];
 	}
 }
 
